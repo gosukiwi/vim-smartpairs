@@ -50,7 +50,7 @@ function! s:Backspace() abort
   let remaining = getline('.')[col('.') - 1:]
 
   if has_key(s:smartpairs_pairs, prevchar) && remaining =~ '^\s*' . s:smartpairs_pairs[prevchar]
-    return "\<Esc>df" . s:smartpairs_pairs[prevchar] . 'i'
+    return "\<Esc>df" . s:smartpairs_pairs[prevchar] . 'a'
   else
     return "\<BS>"
   endif
