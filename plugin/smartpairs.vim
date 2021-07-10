@@ -52,10 +52,10 @@ endfunction
 
 function! s:Backspace() abort
   let prevchar = getline('.')[col('.') - 2]
-  let remaining = getline('.')[col('.') - 1:]
+  let nextchar = getline('.')[col('.') - 1]
 
-  if has_key(s:smartpairs_pairs, prevchar) && remaining =~ '^\s*' . s:smartpairs_pairs[prevchar]
-    return "\<Left>\<C-O>df" . s:smartpairs_pairs[prevchar]
+  if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
+    return "\<Right>\<BS>\<BS>"
   else
     return "\<BS>"
   endif
@@ -94,8 +94,13 @@ function! s:SetUpMappings() abort
     endif
   endfor
 
-  inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
-  inoremap <expr> <buffer> <silent> <Space> <SID>Space()
+  if s:smartpairs_hijack_backspace
+    inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
+  endif
+
+  if s:smartpairs_hijack_space
+    inoremap <expr> <buffer> <silent> <Space> <SID>Space()
+  endif
 
   if s:smartpairs_hijack_return
     " Here we check for previous mappings to |<CR>|. If found, we try to keep
@@ -121,7 +126,9 @@ endfunction
 
 function! SmartPairsInitialize() abort
   let s:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
-  let s:smartpairs_hijack_return = exists('g:smartpairs_hijack_return') ? g:smartpairs_hijack_return : 1
+  let s:smartpairs_hijack_return = get(g:, 'smartpairs_hijack_return', 1)
+  let s:smartpairs_hijack_space = get(g:, 'smartpairs_hijack_space', 0)
+  let s:smartpairs_hijack_backspace = get(g:, 'smartpairs_hijack_backspace', 1)
 
   call s:SetUpMappings()
 endfunction
