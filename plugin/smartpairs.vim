@@ -22,10 +22,10 @@ let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"',
 " KEYBINDED FUNCTIONS
 " ==============================================================================
 function! s:Jump(char) abort
-  let remaining = getline('.')[col('.') - 1:]
+  let nextchar = getline('.')[col('.') - 1]
 
-  if remaining =~ '^\s*' . a:char
-    return "\<Esc>f" . a:char .  "a"
+  if nextchar == a:char
+    return "\<Right>"
   else
     return a:char
   endif
@@ -55,7 +55,7 @@ function! s:Backspace() abort
   let remaining = getline('.')[col('.') - 1:]
 
   if has_key(s:smartpairs_pairs, prevchar) && remaining =~ '^\s*' . s:smartpairs_pairs[prevchar]
-    return "\<Esc>df" . s:smartpairs_pairs[prevchar] . 'a'
+    return "\<Left>\<C-O>df" . s:smartpairs_pairs[prevchar]
   else
     return "\<BS>"
   endif
@@ -77,9 +77,9 @@ function! s:CarriageReturn() abort
   let nextchar = getline('.')[col('.') - 1]
 
   if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
-    return "\<CR>\<Esc>O"
+    return "\<CR>\<C-O>O"
   else
-    return "\<CR>"
+    return "\<CR>\<Plug>(smartpairs-old-cr)"
   endif
 endfunction
 
@@ -98,7 +98,24 @@ function! s:SetUpMappings() abort
   inoremap <expr> <buffer> <silent> <Space> <SID>Space()
 
   if s:smartpairs_hijack_return
-    inoremap <expr> <buffer> <CR> <SID>CarriageReturn()
+    " Here we check for previous mappings to |<CR>|. If found, we try to keep
+    " their functionality as much as possible.
+    "
+    " If the previous mapping starts with |<CR>|, it will remove that part of
+    " the mapping and add it later on. This is because Vim will make an
+    " infinite loop when that's the case.
+    let s:old_cr_mapping = maparg('<CR>', 'i', 0, 1)
+    if s:old_cr_mapping != {}
+      let s:old_cr = s:old_cr_mapping.rhs
+      let s:old_cr = substitute(s:old_cr, '^<CR>', '', 'g')
+      let s:old_cr = substitute(s:old_cr, '<SID>', '<SNR>' . s:old_cr_mapping.sid . '_', 'g')
+      let s:old_cr = substitute(s:old_cr, '<Plug>', '<SNR>' . s:old_cr_mapping.sid . '_', 'g')
+      execute 'imap <buffer> <Plug>(smartpairs-old-cr) ' . s:old_cr
+    else
+      execute 'inoremap <buffer> <Plug>(smartpairs-old-cr) <Nop>'
+    endif
+
+    imap <expr> <buffer> <CR> <SID>CarriageReturn()
   endif
 endfunction
 
