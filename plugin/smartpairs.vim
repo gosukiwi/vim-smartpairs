@@ -26,26 +26,19 @@ function! s:IsSpaceOrEmpty(char) abort
 endfunction
 
 " Symmetric pairs, such as "" and '' behave differently when deleting. We want
-" to be more conservative. So it will only delete if they are surrounded by
-" spaces or nothing.
-"
-" Eg:
-"
-"     ''_'  -> deleting will cause ->  '_'
-"     '''_  -> deleting will cause ->  ''_
-"     '_'   -> deleting will cause ->  _
-
+" to be more conservative. So it will only delete if:
+"   - The previous character different from the opening
+"   - The previous char is a space or empty
 function! s:BackspaceForSymmetricPairs(prevchar)
   let nextchar = getline('.')[col('.') - 1]
   if nextchar != b:smartpairs_pairs[a:prevchar] | return "\<BS>" | endif
 
   let prevprevchar = getline('.')[col('.') - 3]
-  if !s:IsSpaceOrEmpty(prevprevchar) | return "\<BS>" | endif
+  if s:IsSpaceOrEmpty(prevprevchar) || prevprevchar != a:prevchar
+    return "\<Right>\<BS>\<BS>"
+  endif
 
-  let nextnextchar = getline('.')[col('.')]
-  if !s:IsSpaceOrEmpty(nextnextchar) | return "\<BS>" | endif
-
-  return "\<Right>\<BS>\<BS>"
+  return "\<BS>"
 endfunction
 
 " Asymmetric pairs are simpler. We just delete them if they match.
@@ -74,18 +67,25 @@ endfunction
 function! s:InsertOrJump(open, close) abort
   let prevchar = getline('.')[col('.') - 2]
   " We want to always return the actual value if we are trying to escape
-  " somehting
+  " something
   if prevchar == '\' | return a:open | endif
 
   let jump = s:Jump(a:open)
   if jump != a:open | return jump | endif
 
-  " Jump failed, we are adding now. When the pair is SYMMETRIC ('', "", ``,
-  " etc), we don't want to expand if the previous character is not empty.
-  if (prevchar !~ '\s' && prevchar != '') && a:open == a:close
-    return a:open
-  else
+  " Jump failed, we are adding now.
+  " If pair is ASYMMETRIC, just return expansion
+  if a:open != a:close
     return a:open . a:close . "\<Left>"
+  endif
+
+  " When the pair is SYMMETRIC. We want to expand if:
+  "   - The previous character different from the opening
+  "   - The previous char is a space or empty
+  if a:open != prevchar || s:IsSpaceOrEmpty(prevchar)
+    return a:open . a:close . "\<Left>"
+  else
+    return a:open
   endif
 endfunction
 

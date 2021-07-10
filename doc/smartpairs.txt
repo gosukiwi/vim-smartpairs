@@ -6,11 +6,12 @@ License: Same terms as Vim itself (see |license|)
 Help on using smartpairs                                              *smartpairs*
 
     1. INTRODUCTION ................................. |smartpairs-intro|
-    2. JUMPING ...................................... |smartpairs-jumping|
-    3. SPACE ........................................ |smartpairs-space|
-    4. BACKSPACE .................................... |smartpairs-backspace|
-    5. NEWLINE ...................................... |smartpairs-newline|
-    6. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
+    2. INSERTING .................................... |smartpairs-inserting|
+    3. JUMPING ...................................... |smartpairs-jumping|
+    4. SPACE ........................................ |smartpairs-space|
+    5. BACKSPACE .................................... |smartpairs-backspace|
+    6. NEWLINE ...................................... |smartpairs-newline|
+    7. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
 
 ================================================================================
  1. INTRODUCTION                                                *smartpairs-intro*
@@ -37,25 +38,41 @@ Below is an example of smartpairs usage:
                 _
               }
 
+================================================================================
+ 2. INSERTING                                               *smartpairs-inserting*
+
 When inserting pairs, smartpairs tries to be as predictable as possible. For
 situations where you know you don't want to automatically expand a particular
 character, you can use |<C-V>| before the character you want to use.
 
 For example, if you want to input "(", you type "<C-V>(".
 
-Smartpairs will also skip adding pairs if the character before is an escape
+Smartpairs will not add a matching pair if the character before is an escape
 character, in particular "\".
 
+                                    *smartpairs-symmetric* *smartpairs-asymmetric*
+Symmetric pairs (pairs where the opening and closing characters are equal,
+such as "", '', etc) behave differently than asymmetric pairs ((), [], etc).
+
+When typing, asymmetric pairs will always expand when the opening pair is
+typed. Symmetric pairs will NOT expand when the previous character is itself.
+
+  You type    You get    Notes ~
+  '           '_'
+  '           ''_
+  '           '''_       Didn't expand here
+
 ================================================================================
- 2. JUMPING                                                   *smartpairs-jumping*
-When you type a closing pair, and instead of inserting that pair, the cursor
-moves, this is called a jump. It allows you to easily move out of a pairing
-while typing:
+ 3. JUMPING                                                   *smartpairs-jumping*
+When you type an opening pair and, instead of expanding it, the cursor moves,
+this is called a jump. It allows you to easily move out of a pairing while
+typing:
 
-  You type    You get ~
-  [           [_]
-  ]           []_
-
+  You type        You get ~
+  [               [_]
+  ]               []_
+  <Left><Left>    _[]
+  [               [_]
 
                                                       *g:smartpairs_jumps_enabled*
 default: 1 ~
@@ -67,7 +84,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 3. SPACE                                                       *smartpairs-space*
+ 4. SPACE                                                       *smartpairs-space*
 
 By pressing space inside an empty pair, smartpairs can "pad" the pairs:
 
@@ -91,20 +108,19 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 4. BACKSPACE                                               *smartpairs-backspace*
+ 5. BACKSPACE                                               *smartpairs-backspace*
 
 By pressing backspace inside an empty pair, smartpair will try to delete it.
 This operation behaves differently when the pairs are symmetric vs asymmetric.
 
-For asymmetric pairs (when the opening character is different from the closing
-character, such as () and []) it will simply delete the pair.
+For asymmetric pairs it will simply delete the pair.
 
   You type    You get    Notes ~
   (           (_)        "_" represents the cursor
   <BS>        _
 
 For symmetric pairs, it will only delete if they are surrounded by empty
-space.
+space, or if the previous character is not itself.
 
   You type    You get    Notes ~
   '           '_'        "_" represents the cursor
@@ -124,7 +140,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 5. NEWLINE                                                   *smartpairs-newline*
+ 6. NEWLINE                                                   *smartpairs-newline*
 
 By pressing <CR> inside an empty pair, smartpairs will indent it using the
 current syntax:
@@ -146,7 +162,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 6. FILETYPE PAIRINGS                                       *smartpairs-filetypes*
+ 7. FILETYPE PAIRINGS                                       *smartpairs-filetypes*
 
 You can customize the pairings based on filetype by setting
 |g:smartpairs_pairs|.
