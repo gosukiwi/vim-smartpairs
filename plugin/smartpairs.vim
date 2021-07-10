@@ -165,8 +165,8 @@ endfunction
 
 function! SmartPairsInitialize() abort
   if get(b:, 'smartpairs_mappings_initialize', 0) == 0
-    let b:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
     let b:smartpairs_mappings_initialize = 1
+    let b:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
     call s:SetUpMappings()
   end
 endfunction
