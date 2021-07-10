@@ -71,9 +71,15 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 
 By pressing space inside an empty pair, smartpairs can "pad" the pairs:
 
-  You type    You get    Notes ~
-  (           (_)        "_" represents the cursor
+  You type    You get ~
+  (           (_)
   <Space>     ( _ )
+
+This happens only for asymmetric pairs:
+
+  You type    You get ~
+  '           '_'
+  <Space>     ' _'
 
                                                        *g:smartpairs_hijack_space*
 default: 1 ~
