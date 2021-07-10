@@ -25,8 +25,9 @@ It has multiple options you can use to configure it. See the
 # Why
 
 There are other plugins which do pairings as well, but in my opinion they do
-too much. They do so much, there are lots of edge cases where you don't want
-the pairing functionality to trigger.
+too much. Because they do so much, there are lots of edge cases where you
+don't want the pairing functionality to trigger, but it does anyways, and it
+ends up getting in the way.
 
-This plugin aims to be minimal, and err on the side of doing nothing, rather
-than trying to guess all cases.
+This plugin aims to be minimal, and try to be as unobtrusive and unsurprising
+as possible.
