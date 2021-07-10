@@ -3,23 +3,156 @@
 Author:  Federico Ramirez <https://github.com/gosukiwi/>
 License: Same terms as Vim itself (see |license|)
 
-INTRODUCTION                                    *smartpairs*
+Help on using smartpairs                                              *smartpairs*
 
-This plugin tries to be smart about inserting pairings as you type.
-By default, it will complete (), [], {}, '' and "".
+    1. INTRODUCTION ................................. |smartpairs-intro|
+    2. JUMPING ...................................... |smartpairs-jumping|
+    3. SPACE ........................................ |smartpairs-space|
+    4. BACKSPACE .................................... |smartpairs-backspace|
+    5. NEWLINE ...................................... |smartpairs-newline|
+    6. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
 
-For customizations, see |smartpairs-options|. 
+================================================================================
+ 1. INTRODUCTION                                                *smartpairs-intro*
 
-INSERTING                                          *smartpairs-inserting*
+This plugin is all about inserting proper pairings as you type. By default,
+it will complete (), [], {}, '' and "".
 
-The first thing smartpairs does is adding pairings as you type. So if you
-type "(", it will automatically add a closing ")" for you. If you then
-insert a space, it will add another one to pad it.
+Below is an example of smartpairs usage:
 
   You type    You get    Notes ~
-  (           (_)        The "_" represents the cursor
+  (           (_)        "_" represents the cursor
+  <BS>        _
+  [           [_]
+  ]           []_
+  <BS>        [_
+  <BS>        _
+  (           (_)
+  <Space>     ( _ )
+  <BS>        (_ )
+  <BS>        _ )       Here the pair won't be deleted, as there's a space
+  <C-O>df)    _         So we manually clear it
+  {           {_}
+  <CR>        {         Cursor will be indented based on current syntax
+                _
+              }
+
+When inserting pairs, smartpairs tries to be as predictable as possible. For
+situations where you know you don't want to automatically expand a particular
+character, you can use |<C-V>| before the character you want to use.
+
+For example, if you want to input "(", you type "<C-V>(".
+
+Smartpairs will also skip adding pairs if the character before is an escape
+character, in particular "\".
+
+================================================================================
+ 2. JUMPING                                                   *smartpairs-jumping*
+When you type a closing pair, and instead of inserting that pair, the cursor
+moves, this is called a jump. It allows you to easily move out of a pairing
+while typing:
+
+  You type    You get ~
+  [           [_]
+  ]           []_
+
+
+                                                      *g:smartpairs_jumps_enabled*
+default: 1 ~
+
+If you don't want this behavior, or it conflicts with some other plugin, set
+|g:smartpairs_jumps_enabled| to 0: >
+
+    let g:smartpairs_jumps_enabled = 0
+<
+
+================================================================================
+ 3. SPACE                                                       *smartpairs-space*
+
+By pressing space inside an empty pair, smartpairs can "pad" the pairs:
+
+  You type    You get    Notes ~
+  (           (_)        "_" represents the cursor
   <Space>     ( _ )
 
-OPTIONS                                         *smartpairs-options*
+                                                       *g:smartpairs_hijack_space*
+default: 1 ~
+
+If you don't want this behavior, or it conflicts with some other plugin, set
+|g:smartpairs_hijack_space| to 0: >
+
+    let g:smartpairs_hijack_space = 0
+<
+
+================================================================================
+ 4. BACKSPACE                                               *smartpairs-backspace*
+
+By pressing backspace inside an empty pair, smartpair will try to delete it.
+This operation behaves differently when the pairs are symmetric vs asymmetric.
+
+For asymmetric pairs (when the opening character is different from the closing
+character, such as () and []) it will simply delete the pair.
+
+  You type    You get    Notes ~
+  (           (_)        "_" represents the cursor
+  <BS>        _
+
+For symmetric pairs, it will only delete if they are surrounded by empty
+space.
+
+  You type    You get    Notes ~
+  '           '_'        "_" represents the cursor
+  '           ''_
+  '           '''_
+  <Left>      ''_'
+  <BS>        '_'
+  <BS>        _
+
+                                                   *g:smartpairs_hijack_backspace*
+default: 1 ~
+
+If you don't want this behavior, or it conflicts with some other plugin, set
+|g:smartpairs_hijack_backspace| to 0: >
+
+    let g:smartpairs_hijack_backspace = 0
+<
+
+================================================================================
+ 5. NEWLINE                                                   *smartpairs-newline*
+
+By pressing <CR> inside an empty pair, smartpairs will indent it using the
+current syntax:
+
+  You type       You get ~
+  function(      function(_)
+  ) {            function() {_}
+  <CR>           function() {
+                   _
+                 }
+
+                                                       *g:smartpairs_hijack_enter*
+default: 1 ~
+
+If you don't want this behavior, or it conflicts with some other plugin, set
+|g:smartpairs_hijack_enter| to 0: >
+
+    let g:smartpairs_hijack_enter = 0
+<
+
+================================================================================
+ 6. FILETYPE PAIRINGS                                       *smartpairs-filetypes*
+
+You can customize the pairings based on filetype by setting
+|g:smartpairs_pairs|.
+
+                                                              *g:smartpairs_pairs*
+default:~
+>
+    let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
+    let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
+<
+
+If you need to know the filetype for your current buffer to define pairings,
+you can do `:echo &filetype` to get it.
 
 vim:tw=78:ts=8:ft=help:norl:
