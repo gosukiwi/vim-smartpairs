@@ -32,16 +32,21 @@ function! s:Jump(char) abort
 endfunction
 
 function! s:InsertOrJump(open, close) abort
-  let prevchar = nr2char(strgetchar(getline('.'), col('.') - 2))
-  if prevchar == '\'
-    return a:open
-  endif
+  let prevchar = getline('.')[col('.') - 2]
+  " We want to always return the actual value if we are trying to escape
+  " somehting
+  if prevchar == '\' | return a:open | endif
 
   let jump = s:Jump(a:open)
-  if jump == a:open " jump failed
-    return a:open . a:close . "\<Left>"
+  if jump != a:open | return jump | endif
+
+  " Jump failed, we are adding now. When the opening and closing pairs are the
+  " same ('', "", ``, etc), we don't want to expand if the previous character
+  " is not empty. That is the way most IDEs behave.
+  if (prevchar !~ '\s' && prevchar != '') && a:open == a:close
+    return a:open
   else
-    return jump
+    return a:open . a:close . "\<Left>"
   endif
 endfunction
 

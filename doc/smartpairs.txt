@@ -1,0 +1,25 @@
+*smartpairs.txt*  Plugin for adding pairings as you type
+
+Author:  Federico Ramirez <https://github.com/gosukiwi/>
+License: Same terms as Vim itself (see |license|)
+
+INTRODUCTION                                    *smartpairs*
+
+This plugin tries to be smart about inserting pairings as you type.
+By default, it will complete (), [], {}, '' and "".
+
+For customizations, see |smartpairs-options|. 
+
+INSERTING                                          *smartpairs-inserting*
+
+The first thing smartpairs does is adding pairings as you type. So if you
+type "(", it will automatically add a closing ")" for you. If you then
+insert a space, it will add another one to pad it.
+
+  You type    You get    Notes ~
+  (           (_)        The "_" represents the cursor
+  <Space>     ( _ )
+
+OPTIONS                                         *smartpairs-options*
+
+vim:tw=78:ts=8:ft=help:norl:
