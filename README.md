@@ -22,6 +22,18 @@ Smartpairs.vim will add proper pairings as you type:
 It has multiple options you can use to configure it. See the
 [documentation](doc\smartpairs.txt) for all the details.
 
+# Installation
+
+With [vim-plug](https://github.com/junegunn/vim-plug):
+
+    Plug 'gosukiwi/vim-smartpairs'
+
+Vim 8+ package manager
+
+    git clone https://github.com/gosukiwi/vim-smartpairs.git ~/.vim/pack/{whatever name you want}/start/vim-smartpairs
+
+See `:help package` for more info.
+
 # Why
 
 There are other plugins which do pairings as well, but in my opinion they do
