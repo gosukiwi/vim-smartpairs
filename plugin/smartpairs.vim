@@ -46,7 +46,7 @@ function! s:InsertOrJump(open, close) abort
 endfunction
 
 function! s:Backspace() abort
-  let prevchar = nr2char(strgetchar(getline('.'), col('.') - 2))
+  let prevchar = getline('.')[col('.') - 2]
   let remaining = getline('.')[col('.') - 1:]
 
   if has_key(s:smartpairs_pairs, prevchar) && remaining =~ '^\s*' . s:smartpairs_pairs[prevchar]
@@ -57,13 +57,24 @@ function! s:Backspace() abort
 endfunction
 
 function! s:Space() abort
-  let prevchar = nr2char(strgetchar(getline('.'), col('.') - 2))
-  let nextchar = nr2char(strgetchar(getline('.'), col('.') - 1))
+  let prevchar = getline('.')[col('.') - 2]
+  let nextchar = getline('.')[col('.') - 1]
 
   if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
     return "\<Space>\<Space>\<Left>"
   else
     return "\<Space>"
+  endif
+endfunction
+
+function! s:CarriageReturn() abort
+  let prevchar = getline('.')[col('.') - 2]
+  let nextchar = getline('.')[col('.') - 1]
+
+  if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
+    return "\<CR>\<Esc>O"
+  else
+    return "\<CR>"
   endif
 endfunction
 
@@ -80,14 +91,15 @@ function! s:SetUpMappings() abort
 
   inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
   inoremap <expr> <buffer> <silent> <Space> <SID>Space()
+
+  if s:smartpairs_hijack_return
+    inoremap <expr> <buffer> <CR> <SID>CarriageReturn()
+  endif
 endfunction
 
 function! SmartPairsInitialize() abort
-  if has_key(g:smartpairs_pairs, &filetype)
-    let s:smartpairs_pairs = g:smartpairs_pairs[&filetype]
-  else
-    let s:smartpairs_pairs = g:smartpairs_default_pairs
-  endif
+  let s:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
+  let s:smartpairs_hijack_return = exists('g:smartpairs_hijack_return') ? g:smartpairs_hijack_return : 1
 
   call s:SetUpMappings()
 endfunction
