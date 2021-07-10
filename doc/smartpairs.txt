@@ -3,7 +3,7 @@
 Author:  Federico Ramirez <https://github.com/gosukiwi/>
 License: Same terms as Vim itself (see |license|)
 
-Help on using smartpairs                                              *smartpairs*
+Help on using smartpairs                                             *smartpairs*
 
     1. INTRODUCTION ................................. |smartpairs-intro|
     2. INSERTING .................................... |smartpairs-inserting|
@@ -14,7 +14,7 @@ Help on using smartpairs                                              *smartpair
     7. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
 
 ================================================================================
- 1. INTRODUCTION                                                *smartpairs-intro*
+ 1. INTRODUCTION                                               *smartpairs-intro*
 
 This plugin is all about inserting proper pairings as you type. By default,
 it will complete (), [], {}, '' and "".
@@ -39,7 +39,7 @@ Below is an example of smartpairs usage:
               }
 
 ================================================================================
- 2. INSERTING                                               *smartpairs-inserting*
+ 2. INSERTING                                              *smartpairs-inserting*
 
 When inserting pairs, smartpairs tries to be as predictable as possible. For
 situations where you know you don't want to automatically expand a particular
@@ -50,7 +50,7 @@ For example, if you want to input "(", you type "<C-V>(".
 Smartpairs will not add a matching pair if the character before is an escape
 character, in particular "\".
 
-                                    *smartpairs-symmetric* *smartpairs-asymmetric*
+                                   *smartpairs-symmetric* *smartpairs-asymmetric*
 Symmetric pairs (pairs where the opening and closing characters are equal,
 such as "", '', etc) behave differently than asymmetric pairs ((), [], etc).
 
@@ -63,7 +63,7 @@ typed. Symmetric pairs will NOT expand when the previous character is itself.
   '           '''_       Didn't expand here
 
 ================================================================================
- 3. JUMPING                                                   *smartpairs-jumping*
+ 3. JUMPING                                                  *smartpairs-jumping*
 When you type an opening pair and, instead of expanding it, the cursor moves,
 this is called a jump. It allows you to easily move out of a pairing while
 typing:
@@ -74,7 +74,7 @@ typing:
   <Left><Left>    _[]
   [               [_]
 
-                                                      *g:smartpairs_jumps_enabled*
+                                                     *g:smartpairs_jumps_enabled*
 default: 1 ~
 
 If you don't want this behavior, or it conflicts with some other plugin, set
@@ -84,7 +84,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 4. SPACE                                                       *smartpairs-space*
+ 4. SPACE                                                      *smartpairs-space*
 
 By pressing space inside an empty pair, smartpairs can "pad" the pairs:
 
@@ -98,7 +98,7 @@ This happens only for asymmetric pairs:
   '           '_'
   <Space>     ' _'
 
-                                                       *g:smartpairs_hijack_space*
+                                                      *g:smartpairs_hijack_space*
 default: 1 ~
 
 If you don't want this behavior, or it conflicts with some other plugin, set
@@ -108,7 +108,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 5. BACKSPACE                                               *smartpairs-backspace*
+ 5. BACKSPACE                                              *smartpairs-backspace*
 
 By pressing backspace inside an empty pair, smartpair will try to delete it.
 This operation behaves differently when the pairs are symmetric vs asymmetric.
@@ -130,7 +130,7 @@ space, or if the previous character is not itself.
   <BS>        '_'
   <BS>        _
 
-                                                   *g:smartpairs_hijack_backspace*
+                                                  *g:smartpairs_hijack_backspace*
 default: 1 ~
 
 If you don't want this behavior, or it conflicts with some other plugin, set
@@ -140,7 +140,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 6. NEWLINE                                                   *smartpairs-newline*
+ 6. NEWLINE                                                  *smartpairs-newline*
 
 By pressing <CR> inside an empty pair, smartpairs will indent it using the
 current syntax:
@@ -152,7 +152,7 @@ current syntax:
                    _
                  }
 
-                                                       *g:smartpairs_hijack_enter*
+                                                      *g:smartpairs_hijack_enter*
 default: 1 ~
 
 If you don't want this behavior, or it conflicts with some other plugin, set
@@ -162,12 +162,12 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 7. FILETYPE PAIRINGS                                       *smartpairs-filetypes*
+ 7. FILETYPE PAIRINGS                                      *smartpairs-filetypes*
 
 You can customize the pairings based on filetype by setting
 |g:smartpairs_pairs|.
 
-                                                              *g:smartpairs_pairs*
+                                                             *g:smartpairs_pairs*
 default:~
 >
     let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
