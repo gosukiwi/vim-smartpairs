@@ -36,7 +36,7 @@ endfunction
 
 function! s:BackspaceForSymmetricPairs(prevchar)
   let nextchar = getline('.')[col('.') - 1]
-  if nextchar != s:smartpairs_pairs[a:prevchar] | return "\<BS>" | endif
+  if nextchar != b:smartpairs_pairs[a:prevchar] | return "\<BS>" | endif
 
   let prevprevchar = getline('.')[col('.') - 3]
   if !s:IsSpaceOrEmpty(prevprevchar) | return "\<BS>" | endif
@@ -50,7 +50,7 @@ endfunction
 " Asymmetric pairs are simpler. We just delete them if they match.
 function! s:BackspaceForAsymmetricPairs(prevchar)
   let nextchar = getline('.')[col('.') - 1]
-  if nextchar == s:smartpairs_pairs[a:prevchar]
+  if nextchar == b:smartpairs_pairs[a:prevchar]
     return "\<Right>\<BS>\<BS>"
   else
     return "\<BS>"
@@ -60,7 +60,7 @@ endfunction
 " KEYBINDED FUNCTIONS
 " ==============================================================================
 function! s:Jump(char) abort
-  if s:smartpairs_jumps_enabled == 0 | return a:char | endif
+  if get(g:, 'smartpairs_jumps_enabled', 1) == 0 | return a:char | endif
 
   let nextchar = getline('.')[col('.') - 1]
   if nextchar == a:char
@@ -90,9 +90,9 @@ endfunction
 
 function! s:Backspace() abort
   let prevchar = getline('.')[col('.') - 2]
-  if !has_key(s:smartpairs_pairs, prevchar) | return "\<BS>" | endif
+  if !has_key(b:smartpairs_pairs, prevchar) | return "\<BS>" | endif
 
-  if prevchar == s:smartpairs_pairs[prevchar]
+  if prevchar == b:smartpairs_pairs[prevchar]
     return s:BackspaceForSymmetricPairs(prevchar)
   else
     return s:BackspaceForAsymmetricPairs(prevchar)
@@ -101,9 +101,10 @@ endfunction
 
 function! s:Space() abort
   let prevchar = getline('.')[col('.') - 2]
-  let nextchar = getline('.')[col('.') - 1]
+  if !has_key(b:smartpairs_pairs, prevchar) | return "\<Space>" | endif
 
-  if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
+  let nextchar = getline('.')[col('.') - 1] " we don't want to add spacing to symmetric characters
+  if nextchar == b:smartpairs_pairs[prevchar] && prevchar != b:smartpairs_pairs[prevchar]
     return "\<Space>\<Space>\<Left>"
   else
     return "\<Space>"
@@ -114,7 +115,7 @@ function! s:CarriageReturn() abort
   let prevchar = getline('.')[col('.') - 2]
   let nextchar = getline('.')[col('.') - 1]
 
-  if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
+  if has_key(b:smartpairs_pairs, prevchar) && nextchar == b:smartpairs_pairs[prevchar]
     return "\<CR>\<C-O>O"
   else
     return "\<CR>\<Plug>(smartpairs-old-cr)"
@@ -124,23 +125,23 @@ endfunction
 " INITIALIZATION
 " ==============================================================================
 function! s:SetUpMappings() abort
-  let keys = keys(s:smartpairs_pairs)
+  let keys = keys(b:smartpairs_pairs)
   for opening in keys
-    execute 'inoremap <expr> <buffer> <silent> ' . opening . ' <SID>InsertOrJump("' . escape(opening, '"') . '", "' . escape(s:smartpairs_pairs[opening], '"') . '")'
-    if opening != s:smartpairs_pairs[opening]
-      execute 'inoremap <expr> <buffer> <silent> ' . s:smartpairs_pairs[opening] . ' <SID>Jump("' . escape(s:smartpairs_pairs[opening], '"') . '")'
+    execute 'inoremap <expr> <buffer> <silent> ' . opening . ' <SID>InsertOrJump("' . escape(opening, '"') . '", "' . escape(b:smartpairs_pairs[opening], '"') . '")'
+    if opening != b:smartpairs_pairs[opening]
+      execute 'inoremap <expr> <buffer> <silent> ' . b:smartpairs_pairs[opening] . ' <SID>Jump("' . escape(b:smartpairs_pairs[opening], '"') . '")'
     endif
   endfor
 
-  if s:smartpairs_hijack_backspace
+  if get(g:, 'smartpairs_hijack_backspace', 1)
     inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
   endif
 
-  if s:smartpairs_hijack_space
+  if get(g:, 'smartpairs_hijack_space', 1)
     inoremap <expr> <buffer> <silent> <Space> <SID>Space()
   endif
 
-  if s:smartpairs_hijack_return
+  if get(g:, 'smartpairs_hijack_return', 1)
     " Here we check for previous mappings to |<CR>|. If found, we try to keep
     " their functionality as much as possible.
     "
@@ -163,13 +164,11 @@ function! s:SetUpMappings() abort
 endfunction
 
 function! SmartPairsInitialize() abort
-  let s:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
-  let s:smartpairs_hijack_return = get(g:, 'smartpairs_hijack_return', 1)
-  let s:smartpairs_hijack_space = get(g:, 'smartpairs_hijack_space', 1)
-  let s:smartpairs_hijack_backspace = get(g:, 'smartpairs_hijack_backspace', 1)
-  let s:smartpairs_jumps_enabled = get(g:, 'smartpairs_jumps_enabled', 1)
-
-  call s:SetUpMappings()
+  if get(b:, 'smartpairs_mappings_initialize', 0) == 0
+    let b:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
+    let b:smartpairs_mappings_initialize = 1
+    call s:SetUpMappings()
+  end
 endfunction
 
 autocmd BufEnter * :call SmartPairsInitialize()
