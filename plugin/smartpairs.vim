@@ -19,6 +19,44 @@ let g:smartpairs_pairs = {}
 let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
 let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
 
+" UTILITY FUNCTIONS
+function! s:IsSpaceOrEmpty(char) abort
+  return a:char == '' || a:char =~ '\s'
+endfunction
+
+" Symmetric pairs, such as "" and '' behave differently when deleting. We want
+" to be more conservative. So it will only delete if they are surrounded by
+" spaces or nothing.
+"
+" Eg:
+"
+"     ''_'  -> deleting will cause ->  '_'
+"     '''_  -> deleting will cause ->  ''_
+"     '_'   -> deleting will cause ->  _
+
+function! s:BackspaceForSymmetricPairs(prevchar)
+  let nextchar = getline('.')[col('.') - 1]
+  if nextchar != s:smartpairs_pairs[a:prevchar] | return "\<BS>" | endif
+
+  let prevprevchar = getline('.')[col('.') - 3]
+  if !s:IsSpaceOrEmpty(prevprevchar) | return "\<BS>" | endif
+
+  let nextnextchar = getline('.')[col('.')]
+  if !s:IsSpaceOrEmpty(nextnextchar) | return "\<BS>" | endif
+
+  return "\<Right>\<BS>\<BS>"
+endfunction
+
+" Asymmetric pairs are simpler. We just delete them if they match.
+function! s:BackspaceForAsymmetricPairs(prevchar)
+  let nextchar = getline('.')[col('.') - 1]
+  if nextchar == s:smartpairs_pairs[a:prevchar]
+    return "\<Right>\<BS>\<BS>"
+  else
+    return "\<BS>"
+  endif
+endfunction
+
 " KEYBINDED FUNCTIONS
 " ==============================================================================
 function! s:Jump(char) abort
@@ -52,12 +90,12 @@ endfunction
 
 function! s:Backspace() abort
   let prevchar = getline('.')[col('.') - 2]
-  let nextchar = getline('.')[col('.') - 1]
+  if !has_key(s:smartpairs_pairs, prevchar) | return "\<BS>" | endif
 
-  if has_key(s:smartpairs_pairs, prevchar) && nextchar == s:smartpairs_pairs[prevchar]
-    return "\<Right>\<BS>\<BS>"
+  if prevchar == s:smartpairs_pairs[prevchar]
+    return s:BackspaceForSymmetricPairs(prevchar)
   else
-    return "\<BS>"
+    return s:BackspaceForAsymmetricPairs(prevchar)
   endif
 endfunction
 
@@ -127,7 +165,7 @@ endfunction
 function! SmartPairsInitialize() abort
   let s:smartpairs_pairs = has_key(g:smartpairs_pairs, &filetype) ? g:smartpairs_pairs[&filetype] : g:smartpairs_default_pairs
   let s:smartpairs_hijack_return = get(g:, 'smartpairs_hijack_return', 1)
-  let s:smartpairs_hijack_space = get(g:, 'smartpairs_hijack_space', 0)
+  let s:smartpairs_hijack_space = get(g:, 'smartpairs_hijack_space', 1)
   let s:smartpairs_hijack_backspace = get(g:, 'smartpairs_hijack_backspace', 1)
 
   call s:SetUpMappings()
