@@ -60,8 +60,9 @@ endfunction
 " KEYBINDED FUNCTIONS
 " ==============================================================================
 function! s:Jump(char) abort
-  let nextchar = getline('.')[col('.') - 1]
+  if s:smartpairs_jumps_enabled == 0 | return a:char | endif
 
+  let nextchar = getline('.')[col('.') - 1]
   if nextchar == a:char
     return "\<Right>"
   else
@@ -78,9 +79,8 @@ function! s:InsertOrJump(open, close) abort
   let jump = s:Jump(a:open)
   if jump != a:open | return jump | endif
 
-  " Jump failed, we are adding now. When the opening and closing pairs are the
-  " same ('', "", ``, etc), we don't want to expand if the previous character
-  " is not empty. That is the way most IDEs behave.
+  " Jump failed, we are adding now. When the pair is SYMMETRIC ('', "", ``,
+  " etc), we don't want to expand if the previous character is not empty.
   if (prevchar !~ '\s' && prevchar != '') && a:open == a:close
     return a:open
   else
@@ -167,6 +167,7 @@ function! SmartPairsInitialize() abort
   let s:smartpairs_hijack_return = get(g:, 'smartpairs_hijack_return', 1)
   let s:smartpairs_hijack_space = get(g:, 'smartpairs_hijack_space', 1)
   let s:smartpairs_hijack_backspace = get(g:, 'smartpairs_hijack_backspace', 1)
+  let s:smartpairs_jumps_enabled = get(g:, 'smartpairs_jumps_enabled', 1)
 
   call s:SetUpMappings()
 endfunction
