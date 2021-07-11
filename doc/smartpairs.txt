@@ -1,4 +1,4 @@
-*smartpairs.txt*  Plugin for adding pairings as you type
+*smartpairs.txt*  Sensible pairings
 
 Author:  Federico Ramirez <https://github.com/gosukiwi/>
 License: Same terms as Vim itself (see |license|)
@@ -61,6 +61,8 @@ typed. Symmetric pairs will NOT expand when the previous character is itself.
   '           '_'
   '           ''_
   '           '''_       Didn't expand here
+
+Smartpairs will not break the undo sequence, so you can undo as usual.
 
 ================================================================================
  3. JUMPING                                                  *smartpairs-jumping*

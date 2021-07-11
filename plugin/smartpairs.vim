@@ -35,7 +35,7 @@ function! s:BackspaceForSymmetricPairs(prevchar)
 
   let prevprevchar = getline('.')[col('.') - 3]
   if s:IsSpaceOrEmpty(prevprevchar) || prevprevchar != a:prevchar
-    return "\<Right>\<BS>\<BS>"
+    return "\<C-G>U\<Right>\<BS>\<BS>"
   endif
 
   return "\<BS>"
@@ -45,7 +45,7 @@ endfunction
 function! s:BackspaceForAsymmetricPairs(prevchar)
   let nextchar = getline('.')[col('.') - 1]
   if nextchar == b:smartpairs_pairs[a:prevchar]
-    return "\<Right>\<BS>\<BS>"
+    return "\<C-G>U\<Right>\<BS>\<BS>"
   else
     return "\<BS>"
   endif
@@ -58,7 +58,7 @@ function! s:Jump(char) abort
 
   let nextchar = getline('.')[col('.') - 1]
   if nextchar == a:char
-    return "\<Right>"
+    return "\<C-G>U\<Right>"
   else
     return a:char
   endif
@@ -76,14 +76,14 @@ function! s:InsertOrJump(open, close) abort
   " Jump failed, we are adding now.
   " If pair is ASYMMETRIC, just return expansion
   if a:open != a:close
-    return a:open . a:close . "\<Left>"
+    return a:open . a:close . "\<C-G>U\<Left>"
   endif
 
   " When the pair is SYMMETRIC. We want to expand if:
   "   - The previous character different from the opening
   "   - The previous char is a space or empty
   if a:open != prevchar || s:IsSpaceOrEmpty(prevchar)
-    return a:open . a:close . "\<Left>"
+    return a:open . a:close . "\<C-G>U\<Left>"
   else
     return a:open
   endif
@@ -106,7 +106,7 @@ function! s:Space() abort
 
   let nextchar = getline('.')[col('.') - 1] " we don't want to add spacing to symmetric characters
   if nextchar == b:smartpairs_pairs[prevchar] && prevchar != b:smartpairs_pairs[prevchar]
-    return "\<Space>\<Space>\<Left>"
+    return "\<Space>\<Space>\<C-G>U\<Left>"
   else
     return "\<Space>"
   endif
