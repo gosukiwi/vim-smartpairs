@@ -180,4 +180,19 @@ default:~
 If you need to know the filetype for your current buffer to define pairings,
 you can do `:echo &filetype` to get it.
 
+                                                     *g:smartpairs_default_pairs*
+
+If no filetype pairs are found, the default will be used:
+
+default: ~
+>
+    let g:smartpairs_default_pairs = {
+          \ '(': ')',
+          \ '[': ']',
+          \ '{': '}',
+          \ '"': '"',
+          \ "'": "'",
+          \ }
+<
+
 vim:tw=78:ts=8:ft=help:norl:

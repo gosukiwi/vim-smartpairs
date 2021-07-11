@@ -8,7 +8,7 @@ if exists('g:smartpairs_loaded')
 endif
 
 let g:smartpairs_loaded = 1
-let g:smartpairs_default_pairs = { 
+let g:smartpairs_default_pairs = {
       \ '(': ')',
       \ '[': ']',
       \ '{': '}',
