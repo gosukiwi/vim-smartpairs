@@ -30,7 +30,8 @@ With [vim-plug](https://github.com/junegunn/vim-plug):
 
 Vim 8+ package manager
 
-    git clone https://github.com/gosukiwi/vim-smartpairs.git ~/.vim/pack/{whatever name you want}/start/vim-smartpairs
+    git clone https://github.com/gosukiwi/vim-smartpairs.git \
+                ~/.vim/pack/{whatever name you want}/start/vim-smartpairs
 
 See `:help package` for more info.
 
