@@ -100,18 +100,6 @@ function! s:Backspace() abort
   endif
 endfunction
 
-function! s:Space() abort
-  let prevchar = getline('.')[col('.') - 2]
-  if !has_key(b:smartpairs_pairs, prevchar) | return "\<Space>" | endif
-
-  let nextchar = getline('.')[col('.') - 1] " we don't want to add spacing to symmetric characters
-  if nextchar == b:smartpairs_pairs[prevchar] && prevchar != b:smartpairs_pairs[prevchar]
-    return "\<Space>\<Space>\<C-G>U\<Left>"
-  else
-    return "\<Space>"
-  endif
-endfunction
-
 function! s:CarriageReturn() abort
   let prevchar = getline('.')[col('.') - 2]
   let nextchar = getline('.')[col('.') - 1]
@@ -136,10 +124,6 @@ function! s:SetUpMappings() abort
 
   if get(g:, 'smartpairs_hijack_backspace', 1)
     inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
-  endif
-
-  if get(g:, 'smartpairs_hijack_space', 1)
-    inoremap <expr> <buffer> <silent> <Space> <SID>Space()
   endif
 
   if get(g:, 'smartpairs_hijack_return', 1)

@@ -8,10 +8,9 @@ Help on using smartpairs                                             *smartpairs
     1. INTRODUCTION ................................. |smartpairs-intro|
     2. INSERTING .................................... |smartpairs-inserting|
     3. JUMPING ...................................... |smartpairs-jumping|
-    4. SPACE ........................................ |smartpairs-space|
-    5. BACKSPACE .................................... |smartpairs-backspace|
-    6. NEWLINE ...................................... |smartpairs-newline|
-    7. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
+    4. BACKSPACE .................................... |smartpairs-backspace|
+    5. NEWLINE ...................................... |smartpairs-newline|
+    6. FILETYPE PAIRINGS ...........................  |smartpairs-filetypes|
 
 ================================================================================
  1. INTRODUCTION                                               *smartpairs-intro*
@@ -28,11 +27,6 @@ Below is an example of smartpairs usage:
   ]           []_
   <BS>        [_
   <BS>        _
-  (           (_)
-  <Space>     ( _ )
-  <BS>        (_ )
-  <BS>        _ )       Here the pair won't be deleted, as there's a space
-  <C-O>df)    _         So we manually clear it
   {           {_}
   <CR>        {         Cursor will be indented based on current syntax
                 _
@@ -86,31 +80,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 4. SPACE                                                      *smartpairs-space*
-
-By pressing space inside an empty pair, smartpairs can "pad" the pairs:
-
-  You type    You get ~
-  (           (_)
-  <Space>     ( _ )
-
-This happens only for asymmetric pairs:
-
-  You type    You get ~
-  '           '_'
-  <Space>     ' _'
-
-                                                      *g:smartpairs_hijack_space*
-default: 1 ~
-
-If you don't want this behavior, or it conflicts with some other plugin, set
-|g:smartpairs_hijack_space| to 0: >
-
-    let g:smartpairs_hijack_space = 0
-<
-
-================================================================================
- 5. BACKSPACE                                              *smartpairs-backspace*
+ 4. BACKSPACE                                              *smartpairs-backspace*
 
 By pressing backspace inside an empty pair, smartpair will try to delete it.
 This operation behaves differently when the pairs are symmetric vs asymmetric.
@@ -142,7 +112,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 6. NEWLINE                                                  *smartpairs-newline*
+ 5. NEWLINE                                                  *smartpairs-newline*
 
 By pressing <CR> inside an empty pair, smartpairs will indent it using the
 current syntax:
@@ -164,7 +134,7 @@ If you don't want this behavior, or it conflicts with some other plugin, set
 <
 
 ================================================================================
- 7. FILETYPE PAIRINGS                                      *smartpairs-filetypes*
+ 6. FILETYPE PAIRINGS                                      *smartpairs-filetypes*
 
 You can customize the pairings based on filetype by setting
 |g:smartpairs_pairs|.
