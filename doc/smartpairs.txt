@@ -28,7 +28,7 @@ Below is an example of smartpairs usage:
   <BS>        [_
   <BS>        _
   {           {_}
-  <CR>        {         Cursor will be indented based on current syntax
+  <CR>        {         Cursor will be indented using current syntax
                 _
               }
 
@@ -87,15 +87,15 @@ This operation behaves differently when the pairs are symmetric vs asymmetric.
 
 For asymmetric pairs it will simply delete the pair.
 
-  You type    You get    Notes ~
-  (           (_)        "_" represents the cursor
+  You type    You get ~
+  (           (_)
   <BS>        _
 
 For symmetric pairs, it will only delete if they are surrounded by empty
 space, or if the previous character is not itself.
 
-  You type    You get    Notes ~
-  '           '_'        "_" represents the cursor
+  You type    You get ~
+  '           '_'
   '           ''_
   '           '''_
   <Left>      ''_'
