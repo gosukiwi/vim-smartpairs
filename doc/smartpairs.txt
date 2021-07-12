@@ -144,7 +144,6 @@ default:~
 >
     let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
     let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
-    let g:smartpairs_pairs['markdown'] = { '(': ')', '[': ']', '{': '}', '"': '"' }
 <
 
 If you need to know the filetype for your current buffer to define pairings,
