@@ -80,9 +80,9 @@ function! s:InsertOrJump(open, close) abort
   endif
 
   " When the pair is SYMMETRIC. We want to expand if:
-  "   - The previous character different from the opening
+  "   - The previous character different from the opening AND is word
   "   - The previous char is a space or empty
-  if a:open != prevchar || s:IsSpaceOrEmpty(prevchar)
+  if (a:open != prevchar && prevchar !~ '\w') || s:IsSpaceOrEmpty(prevchar)
     return a:open . a:close . "\<C-G>U\<Left>"
   else
     return a:open
