@@ -72,7 +72,13 @@ function! s:InsertOrJump(open, close) abort
   let jump = s:Jump(a:open)
   if jump != a:open | return jump | endif
 
-  " Jump failed, we are adding now.
+  " Jump failed, we are inserting now.
+  " If the next char is a word, don't expand
+  let nextchar = getline('.')[col('.') - 1]
+  if nextchar =~ '\w'
+    return a:open
+  endif
+
   " If pair is ASYMMETRIC, just return expansion
   if a:open != a:close
     return a:open . a:close . "\<C-G>U\<Left>"
