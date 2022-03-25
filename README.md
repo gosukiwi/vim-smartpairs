@@ -15,7 +15,7 @@ Smartpairs.vim will add proper pairings as you type:
                     }
 
 It has multiple options you can use to configure it. See the
-[documentation](doc\smartpairs.txt) for all the details.
+[documentation](doc/smartpairs.txt) for all the details.
 
 # Installation
 

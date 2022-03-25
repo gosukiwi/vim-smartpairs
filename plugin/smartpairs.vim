@@ -147,5 +147,5 @@ if get(g:, 'smartpairs_hijack_return', 1)
 endif
 
 if get(g:, 'smartpairs_hijack_backspace', 1)
-  inoremap <script><expr><silent> <BS> <SID>Backspace()
+  imap <script><expr><silent> <BS> <SID>Backspace()
 endif
