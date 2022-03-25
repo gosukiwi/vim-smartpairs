@@ -1,6 +1,6 @@
 " smartpairs.vim - Sensible pairings
 " Maintainer:	Federico Ramirez <fedra.arg@gmail.com>
-" Version: 0.0.1
+" Version: 0.1.0
 " Repository: https://github.com/gosukiwi/smartpairs
 
 if exists('g:smartpairs_loaded')
@@ -95,6 +95,8 @@ function! s:InsertOrJump(open, close) abort
 endfunction
 
 function! s:Backspace() abort
+  if !exists('b:smartpairs_pairs') | return "\<BS>" | endif
+
   let prevchar = getline('.')[col('.') - 2]
   if !has_key(b:smartpairs_pairs, prevchar) | return "\<BS>" | endif
 
@@ -106,13 +108,15 @@ function! s:Backspace() abort
 endfunction
 
 function! s:CarriageReturn() abort
+  if !exists('b:smartpairs_pairs') | return "\<CR>" | endif
+
   let prevchar = getline('.')[col('.') - 2]
   let nextchar = getline('.')[col('.') - 1]
 
   if has_key(b:smartpairs_pairs, prevchar) && nextchar == b:smartpairs_pairs[prevchar]
     return "\<CR>\<C-O>O"
   else
-    return "\<CR>\<Plug>(smartpairs-old-cr)"
+    return "\<CR>"
   endif
 endfunction
 
@@ -121,36 +125,11 @@ endfunction
 function! s:SetUpMappings() abort
   let keys = keys(b:smartpairs_pairs)
   for opening in keys
-    execute 'inoremap <expr> <buffer> <silent> ' . opening . ' <SID>InsertOrJump("' . escape(opening, '"') . '", "' . escape(b:smartpairs_pairs[opening], '"') . '")'
+    execute 'inoremap <script><expr><buffer><silent> ' . opening . ' <SID>InsertOrJump("' . escape(opening, '"') . '", "' . escape(b:smartpairs_pairs[opening], '"') . '")'
     if opening != b:smartpairs_pairs[opening]
-      execute 'inoremap <expr> <buffer> <silent> ' . b:smartpairs_pairs[opening] . ' <SID>Jump("' . escape(b:smartpairs_pairs[opening], '"') . '")'
+      execute 'inoremap <script><expr><buffer><silent> ' . b:smartpairs_pairs[opening] . ' <SID>Jump("' . escape(b:smartpairs_pairs[opening], '"') . '")'
     endif
   endfor
-
-  if get(g:, 'smartpairs_hijack_backspace', 1)
-    inoremap <expr> <buffer> <silent> <BS> <SID>Backspace()
-  endif
-
-  if get(g:, 'smartpairs_hijack_return', 1)
-    " Here we check for previous mappings to |<CR>|. If found, we try to keep
-    " their functionality as much as possible.
-    "
-    " If the previous mapping starts with |<CR>|, it will remove that part of
-    " the mapping and add it later on. This is because Vim will make an
-    " infinite loop when that's the case.
-    let s:old_cr_mapping = maparg('<CR>', 'i', 0, 1)
-    if s:old_cr_mapping != {}
-      let s:old_cr = s:old_cr_mapping.rhs
-      let s:old_cr = substitute(s:old_cr, '^<CR>', '', 'g')
-      let s:old_cr = substitute(s:old_cr, '<SID>', '<SNR>' . s:old_cr_mapping.sid . '_', 'g')
-      let s:old_cr = substitute(s:old_cr, '<Plug>', '<SNR>' . s:old_cr_mapping.sid . '_', 'g')
-      execute 'imap <buffer> <Plug>(smartpairs-old-cr) ' . s:old_cr
-    else
-      execute 'inoremap <buffer> <Plug>(smartpairs-old-cr) <Nop>'
-    endif
-
-    imap <expr> <buffer> <CR> <SID>CarriageReturn()
-  endif
 endfunction
 
 function! SmartPairsInitialize() abort
@@ -161,4 +140,12 @@ function! SmartPairsInitialize() abort
   end
 endfunction
 
-autocmd BufEnter * :call SmartPairsInitialize()
+autocmd FileType * :call SmartPairsInitialize()
+
+if get(g:, 'smartpairs_hijack_return', 1)
+  imap <script><expr> <CR> <SID>CarriageReturn()
+endif
+
+if get(g:, 'smartpairs_hijack_backspace', 1)
+  inoremap <script><expr><silent> <BS> <SID>Backspace()
+endif
