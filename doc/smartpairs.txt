@@ -124,13 +124,13 @@ current syntax:
                    _
                  }
 
-                                                      *g:smartpairs_hijack_enter*
+                                                      *g:smartpairs_hijack_return*
 default: 1 ~
 
 If you don't want this behavior, or it conflicts with some other plugin, set
-|g:smartpairs_hijack_enter| to 0: >
+|g:smartpairs_hijack_return| to 0: >
 
-    let g:smartpairs_hijack_enter = 0
+    let g:smartpairs_hijack_return = 0
 <
 
 ================================================================================
