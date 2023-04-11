@@ -6,18 +6,23 @@
 if exists('g:smartpairs_loaded')
   finish
 endif
-
 let g:smartpairs_loaded = 1
-let g:smartpairs_default_pairs = {
-      \ '(': ')',
-      \ '[': ']',
-      \ '{': '}',
-      \ '"': '"',
-      \ "'": "'",
-      \ }
-let g:smartpairs_pairs = {}
-let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
-let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
+
+if !exists('g:smartpairs_default_pairs')
+  let g:smartpairs_default_pairs = {
+        \ '(': ')',
+        \ '[': ']',
+        \ '{': '}',
+        \ '"': '"',
+        \ "'": "'",
+        \ }
+endif
+
+if !exists('g:smartpairs_pairs')
+  let g:smartpairs_pairs = {}
+  let g:smartpairs_pairs['vim'] = { '(': ')', '[': ']', '{': '}', "'": "'" }
+  let g:smartpairs_pairs['javascript'] = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
+endif
 
 " UTILITY FUNCTIONS
 function! s:IsSpaceOrEmpty(char) abort
