@@ -119,7 +119,7 @@ function! s:CarriageReturn() abort
   let nextchar = getline('.')[col('.') - 1]
 
   if has_key(b:smartpairs_pairs, prevchar) && nextchar == b:smartpairs_pairs[prevchar]
-    return "\<CR>\<C-O>O"
+    return "\<CR>\<UP>\<END>\<CR>"
   else
     return "\<CR>"
   endif
